@@ -30,8 +30,8 @@ new MongoClient(url).connect().then((client)=>{
 
 
 app.get('/', (req,res)=>{
-  res.send(process.env.API_KEY);
-  // res.sendFile(__dirname + '/page/index.html')
+  // res.send(process.env.API_KEY);
+  res.sendFile(__dirname + '/page/index.html')
 })
 app.get('/about', (req,res)=>{
   res.send("어바웃 페이지");
