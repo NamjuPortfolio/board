@@ -1,41 +1,47 @@
 const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
-
+const { MongoClient } = require('mongodb');
+const methodOverride = require('method-override');
 
 dotenv.config();
+
 app.use(express.json());
-app.use(express.urlencoded({extended: true}))
-
-
-
-
-
-const methodOverride = require('method-override');
+app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
-
 app.set('view engine', 'ejs');
-
-
-const {MongoClient} = require('mongodb');
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/public'));
 
 let db;
 let sample;
 
-new MongoClient(url).connect().then((client)=>{
-  db = client.db("board");
-  sample = client.db("sample_training")
-  console.log("DB 연결 완료!!")
-}).catch((error)=>{
-  console.log(error)
-})
+const withDB = async (handler) => {
+  if (!db) {
+    try {
+      const client = new MongoClient(process.env.MONGODB_URI);
+      await client.connect();
+      db = client.db("board");
+      sample = client.db("sample_training");
+    } catch (error) {
+      console.error('DB 연결 에러', error);
+      throw new Error('DB 연결 에러');
+    }
+  }
+  return handler(db, sample);
+};
 
+app.get('/', async (req, res) => {
+  try {
+    await withDB(async () => {
+      res.send("DB 연결 완료, 동작 확인!");
+    });
+  } catch (error) {
+    console.error('요청 처리 중 에러', error);
+    res.status(500).send('내부 서버 오류');
+  }
+});
 
-app.get('/', (req,res)=>{
-  // res.send(process.env.API_KEY);
-  res.send("되나?")
-  // res.sendFile(__dirname + '/page/index.html')
-})
-
-module.exports = app;
+module.exports = (req, res) => {
+  const handler = app.getRequestHandler();
+  return handler(req, res);
+};
