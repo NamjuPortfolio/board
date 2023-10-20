@@ -37,7 +37,8 @@ new MongoClient(url).connect().then((client)=>{
 
 app.get('/', (req,res)=>{
   // res.send(process.env.API_KEY);
-  res.sendFile(__dirname + '/page/index.html')
+  res.send("되나?")
+  // res.sendFile(__dirname + '/page/index.html')
 })
 
 module.exports = app;
