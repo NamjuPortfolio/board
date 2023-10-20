@@ -41,4 +41,17 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.listen(5000)
+module.exports = (req, res) => {
+  const { url, method } = req;
+
+  if (method === 'GET') {
+    if (url === '/') {
+      // 여기에 루트 URL('/')에 대한 로직을 추가합니다.
+      res.send("DB 연결 완료, 동작 확인!");
+    }
+    // 여기에 다른 'GET' 라우트를 추가할 수 있습니다.
+  } else {
+    // 다른 HTTP 메서드에 대한 처리를 여기에 추가할 수 있습니다.
+    res.status(405).send('Method Not Allowed');
+  }
+};
