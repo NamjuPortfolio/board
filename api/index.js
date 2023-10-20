@@ -27,9 +27,6 @@ new MongoClient(url).connect().then((client)=>{
   db = client.db("board");
   sample = client.db("sample_training")
   console.log("DB 연결 완료!!")
-  app.listen(process.env.SERVER_PORT, ()=>{
-    console.log(`${process.env.SERVER_PORT}번호에서 서버 실행 중`)
-  })
 }).catch((error)=>{
   console.log(error)
 })
